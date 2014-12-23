@@ -1,0 +1,24 @@
+{{html wiki="true"}}
+<p style="text-align: center">[[image:RISCOSS_AlphaVersion.jpg]]</p>
+{{/html}}
+
+RISCOSS aims at facilitating the adoption of open source components by mainstream users, systems integrators and product developers. We are opening the RISCOSS platform step by step. The current stage is what we call “alpha opening.” If you are a project manager you are welcome to try RISCOSS. The project team will be happy to work with you to set up your project onto RISCOSS.
+
+= Available Components and Projects =
+
+RISCOSS helps you assess risks associated with selecting the components and projects (projects are a collection of components) listed below. 
+
+
+{{velocity}}
+#if ($xwiki.getUser().isUserInGroup("XWiki.XWikiAdminGroup"))
+{{include reference="RISCOSSPlatformCode.AdminPage" /}}
+#elseif ($xwiki.getUser().isUserInGroup("RISCOSSPlatformGroups.Producers"))
+{{include reference="RISCOSSPlatformCode.ProducerPage" /}}
+#else
+{{include reference="RISCOSSPlatformCode.ConsumerPage" /}}
+#end
+{{/velocity}}
+
+= Manage your Component or Project =
+
+Project leaders, code producers, create your own entity on the RISCOSS platform.
