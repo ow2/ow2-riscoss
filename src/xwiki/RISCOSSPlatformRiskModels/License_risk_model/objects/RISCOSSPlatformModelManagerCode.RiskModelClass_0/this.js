@@ -1,3 +1,3 @@
 XWikiObj(function (obj) {
-    obj.setRiskModelData("License.xdsl.gz");
+    obj.setRiskModelData("License.xdsl");
 });
