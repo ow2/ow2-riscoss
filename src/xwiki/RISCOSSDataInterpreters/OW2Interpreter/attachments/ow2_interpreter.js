@@ -22,7 +22,10 @@ var lessThan = function (array) {
         for (; i < array.length; i++) {
             if (n < array[i]) { break; }
         }
-        return i / array.length;
+        return {
+            val: i / array.length,
+            raw: n
+        };
     };
 };
 
@@ -33,7 +36,10 @@ var greaterThan = function (array) {
         for (; i < array.length; i++) {
             if (n > array[i]) { break; }
         }
-        return i / array.length;
+        return {
+            val: i / array.length,
+            raw: n
+        };
     };
 };
 
@@ -71,8 +77,11 @@ var CONF = {
         var lt = lessThan([0.05, 0.30, 0.60, 0.80]);
         return function (input, name) {
             return lt({
-                get: function () { return input.get('Files_No_License') / input.get('No_Files'); }
-            }, '');
+                get: function (x) {
+                    var noFiles = input.get('No_Files');
+                    return (noFiles === 0) ? 0 : (input.get('Files_No_License') / noFiles)
+                }
+            }, '_unused_');
         }
     }()),
 
@@ -80,7 +89,7 @@ var CONF = {
 
     Critical_Issue: lessThan([5, 10, 30, 50]),
 
-    Test_Coverage: greaterThan([0.8, 0.5, 0.3, 0.1]),
+    Test_Coverage: greaterThan([80, 50, 30, 10]),
 
     Test_Success: greaterThan([0.999, 0.9, 0.8, 0.2]),
 
@@ -99,7 +108,12 @@ var CONF = {
     omm_documentation: ommRename(lessThan([2, 4, 8, Math.Infinity])), // 'omm_PDOC',
     omm_Software: ommRename(lessThan([0.01, 2.01, 4.01, 5.01])), // 'omm_ENV'
 
-    Project_Activity: function (input) { return input.get('Project_Activity'); },
+    Project_Activity: function (input) {
+        return {
+            val: input.get('Project_Activity'),
+            raw: input.get('Project_Activity')
+        };
+    },
     Number_Contribs: greaterThan([20,10,5,2]),
     Number_Devs: greaterThan([30, 15, 6, 2]),
 
@@ -112,7 +126,7 @@ var CONF = {
         }
     }()),
 
-    Test: function () { return 0.1; }
+    Test: function () { return { val: 0.1, raw: 0.1 }; }
 };
 
 var DIST_SIZES = {
@@ -141,6 +155,32 @@ var DIST_SIZES = {
     "omm_Configuration": 5
 };
 
+var DESCRIPTIONS = {
+    "omm_Software": "OMM development environment risk",
+    "omm_documentation": "OMM documentation risk",
+    "Critical_Issue": "Number of open issues labeled critical",
+    "omm_Requirements": "OMM requirements engineering risk",
+    "Number_Contribs": "Number of contributors",
+    "Unique_Lic": "Number of software copyright licenses",
+    "Blocker_Issue": "Number of open issues labeled blocker",
+    "Project_Activity": "OpenHub project activity level",
+    "Activity_Ratio": "Risk from many contributors / few maintainers",
+    "omm_Roadmap": "OMM roadmap quality risk",
+    "omm_testing": "OMM testing risk",
+    "Ratio_No_Lic": "Ratio of files with no license header",
+    "Test_Coverage": "Test Coverage",
+    "Number_Devs": "OW2Forge number of developers",
+    "omm_Commits": "OMM risk from open bug reports",
+    "Test": "unused",
+    "omm_Standards": "OMM standards related risk",
+    "omm_planning": "OMM planning related risk",
+    "omm_Maintainability": "OMM maintainability risk",
+    "Test_Success": "Risk from test failures",
+    "omm_Stakeholders": "OMM risk from lack of effective stakeholders",
+    "omm_Licenses": "OMM software copyright license risk",
+    "omm_Configuration": "OMM risk from configuration"
+};
+
 var distributize = function (num, name) {
     var out = new Array(DIST_SIZES[name]);
     if (num >= 1) { num = 0.99999; }
@@ -158,9 +198,14 @@ var evaluate = function (json) {
         }
     };
     for (var elem in CONF) {
+        var result = CONF[elem](input, elem);
         out[elem] = {
-            value: distributize(CONF[elem](input, elem), elem),
-            type: "DISTRIBUTION"
+            value: {
+                values: distributize(result.val, elem)
+            },
+            rawValue: result.raw,
+            type: "DISTRIBUTION",
+            description: DESCRIPTIONS[elem]
         };
     }
     return { "result": out, "warnings": [] };
@@ -173,8 +218,9 @@ var getInputs = function () {
             get: function (x) {
                 out[x] = {
                     type:"NUMBER",
-                    value:0
-                }
+                    value:0,
+                    description:DESCRIPTIONS[x]
+                };
             }
         }, elem);
     }
