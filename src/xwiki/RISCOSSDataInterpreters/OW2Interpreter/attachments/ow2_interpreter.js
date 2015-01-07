@@ -68,7 +68,7 @@ var CONF = {
     Unique_Lic: (function () {
         var lt = lessThan([3,6,10,60]);
         return function (input, name) {
-            if (input.get(name) === 0) { return 1; }
+            if (input.get(name) === 0) { return { val: 61, raw: 0 }; }
             return lt(input, name);
         }
     }()),
@@ -121,7 +121,10 @@ var CONF = {
         var gt = greaterThan([100, 60, 30, 10]);
         return function (input, name) {
             return gt({
-                get: function () { return input.get('Number_Contribs') / input.get('Number_Devs'); }
+                get: function () {
+                    var numDevs = input.get('Number_Devs');
+                    return (numDevs === 0) ? 0 : (input.get('Number_Contribs') / numDevs);
+                }
             }, '');
         }
     }()),
