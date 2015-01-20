@@ -34,9 +34,7 @@ var projectActivity = function ($) {
 };
 
 var numberContribLast12Months = function ($) {
-    // dont judge me
-    return $('a[href="/p/org_sat4j/contributors?sort=latest_commit&time_span=12+months"]').
-        prev().text();
+    return $('a[href$="/contributors?sort=latest_commit&time_span=12+months"]').prev().text();
 };
 
 var makeReq = function (url, callback) {
@@ -44,7 +42,7 @@ var makeReq = function (url, callback) {
     JSDom.env(url, ["http://code.jquery.com/jquery.js"], function (errors, window) {
         var $ = window.$;
         out.push({ id: 'Project_Activity', value: projectActivity($) });
-        out.push({ id: 'Number_Contribs', value: numberContribLast12Months($) });
+        out.push({ id: 'Number_Contribs', value: Number(numberContribLast12Months($)) });
         callback(out);
     });
 };
