@@ -192,6 +192,21 @@ var distributize = function (num, name) {
     return out;
 };
 
+var randomize = function (val) {
+    var x = 0;
+    var ni = -1;
+    for (var i = 0; i < val.length; i++) {
+        if (val[i]) {
+            ni = i;
+            continue;
+        }
+        val[i] = Math.random() * 0.05;
+        x += val[i];
+    }
+    val[ni] -= x;
+    return val;
+};
+
 var evaluate = function (json) {
     var out = {};
     var input = {
@@ -202,9 +217,17 @@ var evaluate = function (json) {
     };
     for (var elem in CONF) {
         var result = CONF[elem](input, elem);
+        var dist;
+        if (result.raw < 0) {
+            result.raw = -1;
+            dist = new Array(DIST_SIZES[elem]);
+            for (var i = 0; i < dist.length; i++) { dist[i] = 1 / dist.length; }
+        } else {
+            dist = randomize(distributize(result.val, elem));
+        }
         out[elem] = {
             value: {
-                values: distributize(result.val, elem)
+                values: dist
             },
             rawValue: result.raw,
             type: "DISTRIBUTION",
@@ -221,7 +244,7 @@ var getInputs = function () {
             get: function (x) {
                 out[x] = {
                     type:"NUMBER",
-                    value:0,
+                    value:-1,
                     description:DESCRIPTIONS[x]
                 };
             }
