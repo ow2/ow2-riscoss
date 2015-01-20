@@ -43,7 +43,7 @@ var run = function (conf) {
             elem.target = conf.targetEntity;
         });
         console.log('-----BEGIN RISK DATA-----');
-        console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data, null, '  '));
         console.log('-----END RISK DATA-----');
     });
 };

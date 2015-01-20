@@ -26,7 +26,7 @@ var makeReq = function (url, callback) {
     JSDom.env(url, ["http://code.jquery.com/jquery.js"], function (errors, window) {
         var $ = window.$;
         out.push({ id:'Blocker_Issue', value: Number($('#m_blocker_violations').text()) });
-        out.push({ id:'Criticial_Issue', value: Number($('#m_critical_violations').text()) });
+        out.push({ id:'Critical_Issue', value: Number($('#m_critical_violations').text()) });
         out.push({ id:'Test_Coverage', value: Number($('#m_coverage').text().replace(/%/, '')) });
         out.push({ id:'Test_Success', value: Number($('#m_test_success_density').text().replace(/%/, '')) });
         callback(out);

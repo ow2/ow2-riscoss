@@ -44,7 +44,7 @@ var makeReq = function (url, callback) {
     JSDom.env(url, ["http://code.jquery.com/jquery.js"], function (errors, window) {
         var $ = window.$;
         out.push({ id: 'Project_Activity', value: projectActivity($) });
-        out.push({ id: 'Number_Contrib', value: numberContribLast12Months($) });
+        out.push({ id: 'Number_Contribs', value: numberContribLast12Months($) });
         callback(out);
     });
 };
